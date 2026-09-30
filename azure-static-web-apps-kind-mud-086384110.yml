@@ -1,0 +1,37 @@
+name: Azure Static Web Apps CI/CD
+
+trigger:
+  branches:
+    include:
+      - DevWilson
+
+jobs:
+- job: build_and_deploy_job
+  displayName: Build and Deploy Job
+  pool:
+    vmImage: ubuntu-latest
+
+  steps:
+  - checkout: self
+
+  # 🔥 Instalar Node
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
+
+  # 🔥 Instalar dependencias
+  - script: npm install
+    displayName: 'Install dependencies'
+
+  # 🔥 Build (CLAVE)
+  - script: npm run build
+    displayName: 'Build app'
+
+  # 🚀 Deploy
+  - task: AzureStaticWebApp@0
+    inputs:
+      azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_MUD_086384110)
+      app_location: "/"
+      api_location: ""
+      output_location: "dist"
